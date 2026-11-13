@@ -1,118 +1,90 @@
-# Fix: Missing Wi-Fi Icon & Disappearing WLAN Adapter on ASUS TUF Gaming Laptops (Windows 10/11)
-# حل مشكلة اختفاء أيقونة الواي فاي وكرت الشبكة في لابتوبات ASUS TUF Gaming
+# Fix Missing Wi-Fi Icon on ASUS TUF Gaming (FA506NF / Realtek RTL8852BE)
+# حل مشكلة اختفاء أيقونة الواي فاي في لابتوبات ASUS TUF Gaming
 
-[![Windows](https://img.shields.io/badge/OS-Windows%2010%20%7C%2011-blue?logo=windows)](https://www.microsoft.com/windows)
-[![Laptop](https://img.shields.io/badge/Series-ASUS%20TUF%20Gaming-orange)](https://www.asus.com/)
-[![Wi-Fi Card](https://img.shields.io/badge/Adapter-Realtek%20RTL8852BE%20%7C%20MediaTek%20MT7921-green)](#)
-[![Language](https://img.shields.io/badge/Language-English%20%7C%20العربية-lightgrey)](#)
-
-**🌐 Language / اللغة:** [English Version](#-english-version) | [النسخة العربية](#-النسخة-العربية)
+[English](#english) | [العربية](#arabic)
 
 ---
 
-<a name="-english-version"></a>
-## 🇺🇸 English Version
+<a name="english"></a>
+## English
 
-A complete step-by-step troubleshooting guide to permanently resolve the recurring issue where the Wi-Fi option disappears from the taskbar and the WLAN adapter vanishes from Device Manager on **ASUS TUF Gaming** laptops (such as **FA506**, **FX506**, **FA507**, and **FX507**).
+I ran into a recurring issue on my **ASUS TUF Gaming FA506NF** (running Windows 11) where the Wi-Fi icon would completely disappear from the taskbar, and the **Realtek RTL8852BE** wireless card would vanish from Device Manager—leaving only the Ethernet adapter visible. Rebooting or resetting the network only fixed it temporarily.
 
-### 📋 Symptoms
-* The Wi-Fi icon and toggle completely disappear from the Windows Quick Settings / System Tray upon boot or waking from sleep.
-* Under **Device Manager > Network adapters**, the wireless card (e.g., `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC` or `MediaTek Wi-Fi 6 MT7921`) is completely missing, leaving only the Ethernet controller (`Realtek PCIe GbE Family Controller`) and `WAN Miniport` entries.
-* Multiple reboots or running **Network Reset** temporarily restores Wi-Fi, only for the issue to return after the next shutdown.
+After testing several workarounds, these exact steps permanently fixed the problem for me.
 
-### 🔍 Root Causes
-1. **Windows Fast Startup Conflict:** Keeps the wireless adapter in an unstable hybrid-sleep state during shutdown, preventing proper hardware initialization on the next cold boot.
-2. **Static Charge Buildup:** Residual electrical charge on the motherboard causes the PCIe M.2 WLAN slot to hang until power-cycled.
-3. **Generic Windows Drivers:** Windows Update often installs outdated or generic inbox drivers instead of the stable OEM drivers provided by ASUS.
+### What Happened
+* The Wi-Fi toggle disappeared randomly on boot or after waking from sleep.
+* Under **Device Manager > Network adapters**, `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC` was completely missing.
 
-### 🛠️ Step-by-Step Resolution
+### How I Fixed It
 
-#### Step 1: Perform a Static Discharge (Hard Reset)
-*Use this step immediately if your Wi-Fi adapter is currently missing from Device Manager.*
-1. Completely shut down the laptop (**Start > Power > Shut down**).
-2. Unplug the AC power adapter and disconnect all external USB peripherals.
-3. Press and hold the **Power Button** continuously for **30–40 seconds**.
-4. Reconnect the power adapter and turn the laptop back on.
-5. **Verification:** Open **Device Manager > Network adapters** and confirm that your wireless adapter reappears in the list.
+#### 1. Hard Reset (Static Discharge)
+If your Wi-Fi card is currently missing from Device Manager, do this first to make Windows detect the hardware again:
+1. Shut down the laptop completely (**Start > Power > Shut down**).
+2. Unplug the charger and remove any connected USB devices.
+3. Press and hold the **Power Button** for **35–40 seconds**.
+4. Plug the charger back in and boot up. The Wi-Fi adapter should now show up again in Device Manager.
 
-#### Step 2: Disable Windows Fast Startup (Prevents Recurrence)
-1. Open **Control Panel** (switch *View by* to **Small icons** if needed) and select **Power Options**.
-2. Click **Choose what the power buttons do** on the left sidebar.
-3. Click **Change settings that are currently unavailable** at the top (requires administrator privileges).
-4. Scroll down to **Shutdown settings** and **uncheck** `Turn on fast startup (recommended)`.
-5. Click **Save changes**.
+#### 2. Turn Off Windows Fast Startup
+Fast Startup puts the network card in a suspended state during shutdown, which prevents it from initializing properly on the next boot.
+1. Open **Control Panel** > **Power Options**.
+2. Click **Choose what the power buttons do** on the left.
+3. Click **Change settings that are currently unavailable** at the top.
+4. Uncheck **Turn on fast startup (recommended)** and click **Save changes**.
 
-#### Step 3: Install the Official OEM Wireless Driver from ASUS
-1. Check the exact model number on the bottom sticker of your laptop (e.g., `FA506NF`) and note your wireless chip model (e.g., `Realtek RTL8852BE`).
-2. Visit the official [ASUS Support Download Center](https://www.asus.com/support/download-center/).
-3. Enter your exact laptop model > go to **Driver & Tools** > select your OS (**Windows 11 64-bit** or **Windows 10 64-bit**).
-4. Expand the **Networking** section and download the latest **Realtek Wireless LAN Driver** (or **MediaTek** / **Intel**, matching your hardware).
-   > **Tip:** It is also recommended to download and install the matching **Realtek Bluetooth Driver** from the same section, as both modules share the same combo chip.
-5. Right-click the downloaded installer (`.exe` or `Install.bat`), select **Run as administrator**, complete the setup, and **restart** your laptop.
+#### 3. Clean Install the Official ASUS Driver
+Windows Update tends to install generic drivers that drop out under load. Installing the OEM version from ASUS solved the stability issue:
+1. Go to the [ASUS Support Download Center](https://www.asus.com/support/download-center/) and search for your exact model (in my case, `FA506NF`).
+2. Under **Driver & Tools > Networking**, download the official **Realtek Wireless LAN Driver** (version `V6001.15.163.101` worked reliably for me).
+3. Right-click the installer, select **Run as administrator**, complete the setup, and restart the laptop.
 
-#### Step 4: Verify Device Status & Power Management
-1. Right-click the **Start** button and open **Device Manager**.
-2. Expand **Network adapters**, double-click your wireless card (e.g., `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC`), and verify under the **General** tab that **Device status** reads: *"This device is working properly."*
-3. *(Optional — depends on Windows Modern Standby support)*: If the **Power Management** tab is visible at the top, uncheck **Allow the computer to turn off this device to save power** and click **OK**.
+#### 4. Disable Power Saving on the Adapter (If Available)
+1. Open **Device Manager** > **Network adapters**.
+2. Right-click `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC` and select **Properties**.
+3. If you see a **Power Management** tab, uncheck **Allow the computer to turn off this device to save power** and click **OK**. *(Note: This tab may be hidden on newer Windows 11 builds using Modern Standby).*
 
-### ⚠️ Hardware Note (If the Issue Persists)
-In certain ASUS TUF chassis designs, the M.2 Wi-Fi card is mounted directly underneath the primary NVMe SSD, exposing it to sustained heat. If the card continues to vanish even after applying all software fixes above:
-* Open the back cover, reseat the Wi-Fi card, and clean the gold contacts/slot.
-* Alternatively, upgrade the card to an **Intel AX200** or **Intel AX210** M.2 Wi-Fi module, which resolves thermal dropout issues permanently.
+### Hardware Note
+On some ASUS TUF models, the M.2 Wi-Fi card sits directly beneath the primary NVMe SSD, so heat can cause it to disconnect over time. If the software steps above don't hold, opening the back cover to reseat and clean the Wi-Fi card—or swapping it for an **Intel AX200 / AX210**—will permanently solve it.
 
 ---
 
-<a name="-النسخة-العربية"></a>
-## 🇸🇦 النسخة العربية
+<a name="arabic"></a>
+## العربية
 
-دليل شامل خطوة بخطوة لحل مشكلة اختفاء أيقونة وخيار الواي فاي (Wi-Fi) من شريط المهام واختفاء كرت الشبكة اللاسلكية من إدارة الأجهزة نهائياً في لابتوبات **ASUS TUF Gaming** (مثل موديلات **FA506** و **FX506** و **FA507** و **FX507**).
+واجهت مشكلة متكررة في جهازي **ASUS TUF Gaming FA506NF** (على نظام ويندوز 11)، حيث كانت أيقونة الواي فاي تختفي فجأة من شريط المهام، ويختفي كرت الشبكة اللاسلكية **Realtek RTL8852BE** بالكامل من إدارة الأجهزة (Device Manager) ولا يبقى سوى كرت السلك. إعادة التشغيل أو عمل Network Reset كان يحل المشكلة مؤقتاً فقط.
 
-### 📋 أعراض المشكلة
-* اختفاء أيقونة وخيار الواي فاي تماماً عند تشغيل اللابتوب أو الخروج من وضع السكون.
-* عند فتح **إدارة الأجهزة (Device Manager)** > **محولات الشبكة (Network adapters)**، يختفي كرت الواي فاي (مثل `Realtek 8852BE Wireless LAN WiFi 6` أو `MediaTek MT7921`) ويظهر كرت السلك (`Realtek PCIe GbE`) فقط.
-* عودة الشبكة مؤقتاً بعد تكرار إعادة التشغيل أو عمل **إعادة ضبط الشبكة (Network Reset)**، ثم تكرار المشكلة في المرة القادمة.
+بعد تجربة عدة حلول، هذه الخطوات بالترتيب هي التي أنهت المشكلة معي بشكل نهائي.
 
-### 🔍 الأسباب الرئيسية
-1. **تعارض ميزة بدء التشغيل السريع (Fast Startup):** تبقي كرت الواي فاي في حالة سبات غير مستقرة عند إيقاف تشغيل الجهاز، مما يمنع إقلاعه بشكل سليم عند التشغيل التالي.
-2. **تراكم الشحنات الكهربائية الساكنة:** يسبب تعليق دوائر الطاقة الخاصة بمنفذ كرت الشبكة على اللوحة الأم.
-3. **تعريفات ويندوز الافتراضية:** يقوم تحديث ويندوز أحياناً بتثبيت تعريف عام أو قديم بدلاً من التعريف الرسمي المستقر من شركة ASUS.
+### وصف المشكلة
+* اختفاء خيار وأيقونة الواي فاي عند تشغيل الجهاز أو بعد الخروج من وضع السكون.
+* عند فتح **إدارة الأجهزة (Device Manager) > محولات الشبكة (Network adapters)**، يختفي تعريف `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC` تماماً.
 
-### 🛠️ خطوات الحل الجذري
+### خطوات الحل
 
-#### الخطوة 1: تفريغ الشحنات الساكنة (Hard Reset) لإعادة إظهار الكرت
-*تُستخدم هذه الخطوة فوراً إذا كان كرت الواي فاي مختفياً حالياً من إدارة الأجهزة.*
-1. أوقف تشغيل اللابتوب بالكامل (**ابدأ > الطاقة > إيقاف التشغيل**).
-2. افصل كابل الشاحن وأي أجهزة خارجية متصلة (ماوس، فلاشة، إلخ).
-3. اضغط باستمرار على **زر التشغيل (Power)** لمدة **30 إلى 40 ثانية** متواصلة.
-4. أعد توصيل الشاحن وشغّل اللابتوب.
-5. **التحقق:** افتح **إدارة الأجهزة > محولات الشبكة** وتأكد من عودة ظهور اسم كرت الواي فاي في القائمة.
+#### 1. تفريغ الشحنات الساكنة (Hard Reset)
+إذا كان كرت الواي فاي مختفياً حالياً من إدارة الأجهزة، نفذ هذه الخطوة أولاً لإجبار النظام على قراءة الكرت مجدداً:
+1. أوقف تشغيل اللابتوب بالكامل (**إيقاف التشغيل / Shut down**).
+2. افصل الشاحن وأي أجهزة متصلة بمنافذ USB.
+3. اضغط باستمرار على **زر التشغيل (Power)** لمدة **35 إلى 40 ثانية**.
+4. أعد توصيل الشاحن وشغّل الجهاز؛ سيعود الكرت للظهور في إدارة الأجهزة.
 
-#### الخطوة 2: تعطيل ميزة بدء التشغيل السريع في ويندوز (لمنع تكرار المشكلة)
-1. افتح **لوحة التحكم (Control Panel)** (غيّر طريقة العرض إلى **أيقونات صغيرة** إذا لزم الأمر) واختر **خيارات الطاقة (Power Options)**.
-2. من القائمة الجانبية اختر **تحديد ما تفعله أزرار الطاقة (Choose what the power buttons do)**.
+#### 2. تعطيل ميزة بدء التشغيل السريع (Fast Startup)
+هذه الميزة تبقي كرت الشبكة في حالة تعليق عند إطفاء الجهاز وتمنعه من الإقلاع بشكل سليم في المرة التالية:
+1. افتح **لوحة التحكم (Control Panel)** > **خيارات الطاقة (Power Options)**.
+2. اختر من القائمة الجانبية **تحديد ما تفعله أزرار الطاقة (Choose what the power buttons do)**.
 3. اضغط في الأعلى على **تغيير الإعدادات غير المتوفرة حالياً (Change settings that are currently unavailable)**.
-4. انزل إلى قسم **إعدادات إيقاف التشغيل** وأزل علامة الصح من أمام **تشغيل بدء التشغيل السريع (مستحسن)**.
-5. اضغط على **حفظ التغييرات (Save changes)**.
+4. أزل علامة الصح من أمام **تشغيل بدء التشغيل السريع (Turn on fast startup)** واضغط **حفظ التغييرات**.
 
-#### الخطوة 3: تحميل وتثبيت التعريف الرسمي من موقع ASUS
-1. اقرأ رقم الموديل الدقيق من الملصق أسفل اللابتوب (مثال: `FA506NF`) ونوع شريحة الواي فاي (مثال: `Realtek RTL8852BE`).
-2. ادخل إلى مركز تحميل تعريفات ASUS الرسمي: [ASUS Support Download Center](https://www.asus.com/support/download-center/).
-3. اكتب رقم موديل جهازك > اختر **Driver & Tools** > حدد نظام التشغيل (**Windows 11 64-bit** أو **Windows 10 64-bit**).
-4. افتح قسم **Networking** وحمّل أحدث إصدار من **Realtek Wireless LAN Driver** (أو **MediaTek** / **Intel** حسب نوع الكرت لديك).
-   > **نصيحة:** يُنصح أيضاً بتحميل وتثبيت تعريف البلوتوث **Realtek Bluetooth Driver** من نفس القسم لأن الشريحتين مدمجتان معاً.
-5. اضغط بالزر الأيمن على ملف التثبيت المحمّل (`.exe` أو `Install.bat`)، اختر **تشغيل كمسؤول (Run as administrator)**، أكمل التثبيت، ثم **أعد تشغيل اللابتوب**.
+#### 3. تثبيت التعريف الرسمي من موقع ASUS
+تحديثات ويندوز التلقائية تثبت تعريفات عامة تسبب فصل الكرت باستمرار؛ لذا الأفضل تثبيت تعريف ASUS الرسمي:
+1. ادخل إلى [مركز تحميل تعريفات ASUS](https://www.asus.com/support/download-center/) وابحث برقم موديل جهازك الدقيق (في حالتي `FA506NF`).
+2. من قسم **Driver & Tools > Networking**، حمّل التعريف الرسمي **Realtek Wireless LAN Driver** (الإصدار `V6001.15.163.101` هو الذي استقر معي).
+3. اضغط بالزر الأيمن على ملف التثبيت واختر **تشغيل كمسؤول (Run as administrator)**، أكمل التثبيت، ثم أعد تشغيل الجهاز.
 
-#### الخطوة 4: التأكد من حالة الكرت وإدارة الطاقة
-1. اضغط بالزر الأيمن على زر **ابدأ** وافتح **إدارة الأجهزة (Device Manager)**.
-2. وسّع قائمة **محولات الشبكة**، اضغط مرتين على كرت الواي فاي (مثل `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC`)، وتأكد في تبويب **عام** أن حالة الجهاز هي: **"يعمل هذا الجهاز بشكل صحيح."**
-3. *(اختياري — يعتمد على إصدار ويندوز)*: إذا ظهر تبويب **إدارة الطاقة (Power Management)** في الأعلى، أزل علامة الصح من أمام **السماح للكمبيوتر بإيقاف تشغيل هذا الجهاز لتوفير الطاقة** واضغط **موافق**.
+#### 4. إيقاف توفير الطاقة للكرت (إن وُجد)
+1. افتح **إدارة الأجهزة (Device Manager)** > **محولات الشبكة**.
+2. اضغط بالزر الأيمن على `Realtek 8852BE Wireless LAN WiFi 6 PCI-E NIC` واختر **خصائص (Properties)**.
+3. إذا ظهر لك تبويب **إدارة الطاقة (Power Management)**، أزل علامة الصح من أمام **السماح للكمبيوتر بإيقاف تشغيل هذا الجهاز لتوفير الطاقة** واضغط **موافق**. *(ملاحظة: قد لا يظهر هذا التبويب في بعض نسخ ويندوز 11 الحديثة)*.
 
-### ⚠️ ملاحظة عتادية (في حال استمرار المشكلة)
-في بعض تصاميم لابتوبات ASUS TUF، يقع كرت الواي فاي أسفل وحدة التخزين (NVMe SSD) مباشرة، مما يعرضه لحرارة مستمرة. إذا استمر اختفاء الكرت حتى بعد تطبيق جميع الخطوات البرمجية أعلاه:
-* افتح الغطاء الخلفي، أخرج كرت الواي فاي، ونظّف مدخله وأطرافه الذهبية ثم أعد تركيبه بإحكام.
-* أو استبدل الكرت بشريحة **Intel AX200** أو **Intel AX210** التي تحل مشاكل الحرارة وفصل الإشارة بشكل نهائي.
-
----
-
-## 🏷️ Keywords / الوسوم
-`asus-tuf` `wifi-missing` `realtek-rtl8852be` `mediatek-mt7921` `windows-11` `network-adapter-missing` `fa506` `fx506` `troubleshooting` `اختفاء-الواي-فاي` `اسوس-تاف`
+### ملاحظة بخصوص الهاردوير
+في تصميم بعض موديلات ASUS TUF، يقع كرت الواي فاي تحت وحدة التخزين (NVMe SSD) مباشرة، مما يعرضه للحرارة. إذا استمرت المشكلة بعد تطبيق الخطوات البرمجية أعلاه، فالحل النهائي هو فتح الغطاء الخلفي وتنظيف مدخل الكرت وإعادة تركيبه بإحكام، أو استبداله بكرت **Intel AX200 / AX210**.
